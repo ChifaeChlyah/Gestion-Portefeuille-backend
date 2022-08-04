@@ -8,4 +8,5 @@ public interface ComptesService {
     public Role saveRole(Role role);
     public void addRoleToUser(String email,String role);
     public Ressource findUserByEmail(String email);
+    public Role findRole(String nomRole);
 }

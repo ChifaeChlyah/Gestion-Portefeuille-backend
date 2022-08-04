@@ -1,7 +1,10 @@
 package com.onee.gestionportefeuilles.web;
 
 import com.onee.gestionportefeuilles.dao.ProjetRepository;
+import com.onee.gestionportefeuilles.dao.RessourceRepository;
 import com.onee.gestionportefeuilles.entities.Projet;
+import com.onee.gestionportefeuilles.entities.Ressource;
+import com.onee.gestionportefeuilles.entities.enums.PrioriteProjet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.http.MediaType;
@@ -15,8 +18,11 @@ import java.util.List;
 @CrossOrigin("*")
 @RestController
 public class projetRestController {
-
+    @Autowired
     ProjetRepository projetRepository;
+    @Autowired
+    RessourceRepository ressourceRepository;
+
     public projetRestController(ProjetRepository projetRepository)
     {
         this.projetRepository=projetRepository;
@@ -32,5 +38,15 @@ public class projetRestController {
     public List<Projet> tousLesProjets()
     {
         return projetRepository.findAll();
+    }
+    @PostMapping(path="/add-projet")
+    public Projet addProjet(@RequestBody Projet projet){
+//        projet.setPriorite(PrioriteProjet.valueOf(projet.getPriorite()));
+//        for (Ressource r:projet.getIntervenants()) {
+//            r.getProjetsAffectes().add(projet);
+//            ressourceRepository.save(r);
+//        }
+//        System.out.println("*********************************************"+projet.getIntervenants());
+        return projetRepository.save(projet);
     }
 }

@@ -23,6 +23,7 @@ public class JWTAuthentificationFilter extends UsernamePasswordAuthenticationFil
     AuthenticationManager authenticationManager;
 
     public JWTAuthentificationFilter(AuthenticationManager authenticationManager) {
+        super();
         this.authenticationManager = authenticationManager;
     }
 
@@ -38,15 +39,15 @@ public class JWTAuthentificationFilter extends UsernamePasswordAuthenticationFil
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        User springUser= (User)authResult.getPrincipal();
-        String jwtToken= Jwts.builder()
-                .setSubject(springUser.getUsername())
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
+                                            Authentication authResult) throws IOException, ServletException {
+        User springUser=(User) authResult.getPrincipal();
+        String jwtToken=Jwts.builder().setSubject(springUser.getUsername())
                 .setExpiration(new Date(System.currentTimeMillis()+SecurityConstants.EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET)
-                .claim("roles ", springUser.getAuthorities())
+                .signWith(SignatureAlgorithm.HS256, SecurityConstants.SECRET)
+                .claim("roles", springUser.getAuthorities())
                 .compact();
-        response.addHeader(SecurityConstants.HEADER_STRING,
-                SecurityConstants.TOKEN_PREFIX+jwtToken);
+        response.addHeader(SecurityConstants.HEADER_STRING,SecurityConstants.TOKEN_PREFIX+ jwtToken);
+
     }
 }

@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.nio.file.Paths;
+
 @SpringBootApplication
 public class GestionPortefeuillesApplication implements CommandLineRunner {
     @Bean
@@ -31,23 +33,36 @@ public class GestionPortefeuillesApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        comptesService.saveRole(new Role(null,"Administrateur"));
-        comptesService.saveRole(new Role(null,"Gestionnaire de portefeuilles"));
-        comptesService.saveRole(new Role(null,"Chef de projets"));
-        comptesService.saveRole(new Role(null,"Intervenant développeur"));
-        comptesService.saveUser(new Ressource(null,null,null,null,
-                "administrateur@gmail.com","null","123",null,null,null));
+        System.out.println("********************************************************"+Paths.get(System.getProperty("user.home")));
+        if(comptesService.findRole("Administrateur")==null)
+            comptesService.saveRole(new Role(null,"Administrateur"));
+        if(comptesService.findRole("Gestionnaire de portefeuilles")==null)
+            comptesService.saveRole(new Role(null,"Gestionnaire de portefeuilles"));
+        if(comptesService.findRole("Chef de projets")==null)
+            comptesService.saveRole(new Role(null,"Chef de projets"));
+        if(comptesService.findRole("Intervenant développeur")==null)
+            comptesService.saveRole(new Role(null,"Intervenant développeur"));
+        if(comptesService.findUserByEmail("administrateur@gmail.com")==null) {
+            comptesService.saveUser(new Ressource(null, null, null, null,null,
+                    "administrateur@gmail.com", "null", "123", null, null, null));
+            comptesService.addRoleToUser("administrateur@gmail.com", "Administrateur");
+        }
+        if(comptesService.findUserByEmail("gestionnairePortefeuille@gmail.com")==null) {
+            comptesService.saveUser(new Ressource(null, null, null, null, null,
+                    "gestionnairePortefeuille@gmail.com", "null", "123", null, null, null));
+            comptesService.addRoleToUser("gestionnairePortefeuille@gmail.com", "Gestionnaire de portefeuilles");
+        }
+        if(comptesService.findUserByEmail("chefProjet@gmail.com")==null) {
+            comptesService.saveUser(new Ressource(null, null, null, null, null,
+                    "chefProjet@gmail.com", "null", "123", null, null, null));
+            comptesService.addRoleToUser("chefProjet@gmail.com", "Chef de projets");
+        }
+        if(comptesService.findUserByEmail("developpeur@gmail.com")==null) {
+            comptesService.saveUser(new Ressource(null, null, null, null, null,
+                    "developpeur@gmail.com", "null", "123", null, null, null));
+            comptesService.addRoleToUser("developpeur@gmail.com", "Intervenant développeur");
 
-        comptesService.saveUser(new Ressource(null,null,null,null,
-                "gestionnairePortefeuille@gmail.com","null","123",null,null,null));
-        comptesService.saveUser(new Ressource(null,null,null,null,
-                "chefProjet@gmail.com","null","123",null,null,null));
-        comptesService.saveUser(new Ressource(null,null,null,null,
-                "developpeur@gmail.com","null","123",null,null,null));
-        comptesService.addRoleToUser("administrateur@gmail.com","Administrateur");
-        comptesService.addRoleToUser("gestionnairePortefeuille@gmail.com","Gestionnaire de portefeuilles");
-        comptesService.addRoleToUser("chefProjet@gmail.com","Chef de projets");
-        comptesService.addRoleToUser("developpeur@gmail.com","Intervenant développeur");
+        }
 //        //création des rôles
 //        if(roleRepository.findByNomRole("Administrateur").isEmpty()) {
 //            Role role = new Role();

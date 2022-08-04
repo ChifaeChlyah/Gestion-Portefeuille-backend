@@ -41,6 +41,15 @@ public class ComptesServiceImpl implements ComptesService{
 
     @Override
     public Ressource findUserByEmail(String email) {
+        if(ressourceRepository.findByEmail(email).isEmpty())
+            return null;
         return ressourceRepository.findByEmail(email).get(0);
+    }
+
+    @Override
+    public Role findRole(String nomRole) {
+        if(roleRepository.findByNomRole(nomRole).isEmpty())
+            return null;
+        return roleRepository.findByNomRole(nomRole).get(0);
     }
 }
