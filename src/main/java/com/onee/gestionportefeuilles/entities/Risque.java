@@ -14,9 +14,9 @@ import javax.persistence.*;
 public class Risque {
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     Long idRisque;
-    String nom;
-    @Enumerated(EnumType.STRING)
-    SeveriteRisque severite;
+    String titre;
+    String severite;
+    String description;
     double probabilite;
     //relations entre les tables
     @ManyToOne

@@ -14,8 +14,8 @@ import java.util.Collection;
 public class Intervention {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long idIntervention;
-    double charge;
-    double PourcentageAffectation;
+//    double charge;
+    double affectation;
     // relation entre les tables
     @ManyToOne
     private Tache tache;

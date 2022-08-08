@@ -2,17 +2,19 @@ package com.onee.gestionportefeuilles.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Ressource {
@@ -27,15 +29,25 @@ public class Ressource {
     String email;
     String tel;
     String password;
-    @OneToMany(mappedBy = "intervenant")
-    @JsonIgnoreProperties("interventions")
+    @OneToMany(mappedBy = "intervenant",cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Collection<Intervention> interventions;
     @OneToMany(mappedBy = "chefProjet")
-    @JsonManagedReference
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Collection<Projet> projets_geres;
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles=new ArrayList<>();
-//    @ManyToMany(cascade = CascadeType.ALL)
-//    @JsonIgnoreProperties("projetsAffectes")
-//    private Collection<Projet> projetsAffectes;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @ManyToMany(mappedBy = "intervenants",cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    private Set<Projet> projetsAffectes=new HashSet<>();
+    public void addProjetAffecte(Projet projet)
+    {
+        projetsAffectes.add(projet);
+    }
 }

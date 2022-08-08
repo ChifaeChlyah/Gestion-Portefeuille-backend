@@ -1,10 +1,13 @@
 package com.onee.gestionportefeuilles;
 
+import com.onee.gestionportefeuilles.dao.ProjetRepository;
 import com.onee.gestionportefeuilles.dao.RessourceRepository;
 import com.onee.gestionportefeuilles.dao.RoleRepository;
+import com.onee.gestionportefeuilles.entities.Projet;
 import com.onee.gestionportefeuilles.entities.Ressource;
 import com.onee.gestionportefeuilles.entities.Role;
 import com.onee.gestionportefeuilles.service.ComptesService;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -13,7 +16,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import javax.transaction.Transactional;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 @SpringBootApplication
 public class GestionPortefeuillesApplication implements CommandLineRunner {
@@ -28,8 +33,23 @@ public class GestionPortefeuillesApplication implements CommandLineRunner {
         SpringApplication.run(GestionPortefeuillesApplication.class, args);
     }
 
-
-
+    @Autowired
+    private ProjetRepository projetRepository;
+    @Transactional
+    void test()
+    {
+        Projet projet= new Projet();
+        projet.setCodeProjet("testRun");
+        ArrayList<Ressource> intervenants=new ArrayList<>();
+        Ressource r1=comptesService.findUserByEmail("developpeur@gmail.com");
+        r1.addProjetAffecte(projet);
+        intervenants.add(r1);
+        Ressource r2=comptesService.findUserByEmail("chefProjet@gmail.com");
+//        intervenants.add(r2);
+//        r2.getProjetsAffectes().add(projet);
+//        projet.setIntervenants(intervenants);
+        projetRepository.save(projet);
+    }
 
     @Override
     public void run(String... args) throws Exception {
@@ -40,29 +60,30 @@ public class GestionPortefeuillesApplication implements CommandLineRunner {
             comptesService.saveRole(new Role(null,"Gestionnaire de portefeuilles"));
         if(comptesService.findRole("Chef de projets")==null)
             comptesService.saveRole(new Role(null,"Chef de projets"));
-        if(comptesService.findRole("Intervenant développeur")==null)
-            comptesService.saveRole(new Role(null,"Intervenant développeur"));
+        if(comptesService.findRole("Utilisateur")==null)
+            comptesService.saveRole(new Role(null,"Utilisateur"));
         if(comptesService.findUserByEmail("administrateur@gmail.com")==null) {
             comptesService.saveUser(new Ressource(null, null, null, null,null,
-                    "administrateur@gmail.com", "null", "123", null, null, null));
+                    "administrateur@gmail.com", "null", "123", null, null, null, null));
             comptesService.addRoleToUser("administrateur@gmail.com", "Administrateur");
         }
         if(comptesService.findUserByEmail("gestionnairePortefeuille@gmail.com")==null) {
             comptesService.saveUser(new Ressource(null, null, null, null, null,
-                    "gestionnairePortefeuille@gmail.com", "null", "123", null, null, null));
+                    "gestionnairePortefeuille@gmail.com", "null", "123", null, null, null, null));
             comptesService.addRoleToUser("gestionnairePortefeuille@gmail.com", "Gestionnaire de portefeuilles");
         }
         if(comptesService.findUserByEmail("chefProjet@gmail.com")==null) {
             comptesService.saveUser(new Ressource(null, null, null, null, null,
-                    "chefProjet@gmail.com", "null", "123", null, null, null));
+                    "chefProjet@gmail.com", "null", "123", null, null, null, null));
             comptesService.addRoleToUser("chefProjet@gmail.com", "Chef de projets");
         }
         if(comptesService.findUserByEmail("developpeur@gmail.com")==null) {
             comptesService.saveUser(new Ressource(null, null, null, null, null,
-                    "developpeur@gmail.com", "null", "123", null, null, null));
-            comptesService.addRoleToUser("developpeur@gmail.com", "Intervenant développeur");
+                    "developpeur@gmail.com", "null", "123", null, null, null, null));
+            comptesService.addRoleToUser("developpeur@gmail.com", "Utilisateur");
 
         }
+//        test();
 //        //création des rôles
 //        if(roleRepository.findByNomRole("Administrateur").isEmpty()) {
 //            Role role = new Role();

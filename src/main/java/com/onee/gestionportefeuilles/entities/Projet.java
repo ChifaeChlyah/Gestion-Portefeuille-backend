@@ -1,22 +1,22 @@
 package com.onee.gestionportefeuilles.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.onee.gestionportefeuilles.entities.enums.PrioriteProjet;
 import com.onee.gestionportefeuilles.entities.enums.StatutProjet;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import net.minidev.json.annotate.JsonIgnore;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
+
 @Entity
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Projet {
@@ -43,14 +43,19 @@ public class Projet {
     private Collection<Projet> predecesseurs;
     @OneToMany(mappedBy = "projet")
     @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Collection<Risque> risques;
     @OneToMany(mappedBy = "projet")
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Collection<Tache> taches;
     @ManyToOne
-    @JsonBackReference
     private Ressource chefProjet;
-//    @ManyToMany(mappedBy = "projetsAffectes")
-//    @LazyCollection(LazyCollectionOption.FALSE)
-//    private Collection<Ressource> intervenants=new ArrayList<>();
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    private Set<Ressource> intervenants=new HashSet<>();
+    @OneToMany(mappedBy = "projet")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Set<PieceJointe> pieceJointes=new HashSet<>();
 }
