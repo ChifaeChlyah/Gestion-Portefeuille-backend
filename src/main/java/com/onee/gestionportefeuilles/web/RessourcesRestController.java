@@ -98,8 +98,12 @@ public class RessourcesRestController {
             MediaType.IMAGE_PNG_VALUE)
     public byte[] getLogo(@PathVariable("code") Long code) throws Exception{
         Ressource r=ressourceRepository.findById(code).get();
-        return Files.readAllBytes(Paths.get(System.getProperty("user.home")+
+        if(r.getNomPhoto()!=null)
+            return Files.readAllBytes(Paths.get(System.getProperty("user.home")+
                 "\\Documents\\Stage Portefeuilles de Projets\\imagesProjet\\Photos\\"+r.getNomPhoto()));
+        else
+            return Files.readAllBytes(Paths.get(System.getProperty("user.home")+
+                    "\\Documents\\Stage Portefeuilles de Projets\\imagesProjet\\Photos\\"+"default.png"));
     }
     @PostMapping("change_password/{code}")
     public boolean changePassword(@PathVariable("code") Long code,@RequestBody ChangePasswordForm form)

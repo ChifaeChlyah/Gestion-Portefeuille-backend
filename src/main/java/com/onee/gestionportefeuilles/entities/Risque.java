@@ -1,5 +1,6 @@
 package com.onee.gestionportefeuilles.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.onee.gestionportefeuilles.entities.enums.SeveriteRisque;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,5 +21,6 @@ public class Risque {
     double probabilite;
     //relations entre les tables
     @ManyToOne
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     Projet projet;
 }

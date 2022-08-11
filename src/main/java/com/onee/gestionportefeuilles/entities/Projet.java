@@ -43,10 +43,8 @@ public class Projet {
     private Collection<Projet> predecesseurs;
     @OneToMany(mappedBy = "projet")
     @JsonIgnore
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Collection<Risque> risques;
     @OneToMany(mappedBy = "projet")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Collection<Tache> taches;
     @ManyToOne
     private Ressource chefProjet;
@@ -56,6 +54,5 @@ public class Projet {
     })
     private Set<Ressource> intervenants=new HashSet<>();
     @OneToMany(mappedBy = "projet")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Set<PieceJointe> pieceJointes=new HashSet<>();
 }

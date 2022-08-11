@@ -9,10 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @CrossOrigin("*")
 @RestController
@@ -83,6 +81,7 @@ public class projetRestController {
     public void addTache(@RequestBody Collection<Tache> taches, @PathVariable String id
     ) throws Exception{
         Projet p=projetRepository.findById(id).get();
+        System.out.println(taches);
         Map<Long, Long> map = new HashMap<>();
         taches.forEach(tache->
        {
@@ -99,25 +98,94 @@ public class projetRestController {
             tacheRepository.save(tache);
             map.put(indice,tache.getIdTache());
             tache.getInterventions().forEach(i->{
-                i.setTache(tache);
-                interventionRepository.save(i);
+                if(i!=null) {
+                    i.setTache(tache);
+                    interventionRepository.save(i);
+                }
             });
        });
+    }
+    @DeleteMapping("delete-all-taches/{codeProjet}")
+    public Projet deleteAllTaches(@PathVariable String codeProjet)
+    {
+        Projet projet=projetRepository.findById(codeProjet).get();
+        projet.getTaches().forEach(t->
+        {
+            t.setTacheMere(null);
+            t.setDependances(new ArrayList<>());
+        });
+        projet.getTaches().forEach(t->
+        {
+            t.getInterventions().forEach(i->
+            {
+                interventionRepository.delete(i);
+            });
+            tacheRepository.delete(t);
+        });
+        return projet;
     }
     @GetMapping(path="/tousLesProjets")
     public List<Projet> tousLesProjets()
     {
         return projetRepository.findAll();
     }
-    @PostMapping(path="/add-projet")
-    public Projet addProjet(@RequestBody Projet projet){
-        System.out.println("*********************************************"+projet.getIntervenants());
-        Projet p=projetRepository.save(projet);
-//        for (Ressource r:projet.getIntervenants()) {
-//            r.addProjetAffecte(projet);
-//            ressourceRepository.save(r);
-//        }
+    @GetMapping(path="/projet-by-code/{code}")
+    public Projet tousLesProjets(@PathVariable String code )
+    {
+        Projet p= projetRepository.findById(code).get();
         return p;
     }
+    @PostMapping(path="/add-projet")
+    public Projet addProjet(@RequestBody Projet projet){
+        List<Projet> predecesseurs=new ArrayList<>();
+        projet.getPredecesseurs().forEach(p->
+        {
+            p.getPredecesseurs().forEach(
+                    pre->{
+                        AtomicBoolean contains= new AtomicBoolean(false);
+                        projet.getPredecesseurs().forEach(
+                                proj->{
+                                    if(proj.getCodeProjet().equals(pre.getCodeProjet()))
+                                        contains.set(true);
+                                }
+                        );
+                        if(!contains.get())
+                            predecesseurs.add(pre);
+                    }
+            );
+        });
+        Projet p=projetRepository.save(projet);
+        p.setTaches(new ArrayList<>());
+        return p;
+    }
+    @PostMapping(path="/update-projet")
+    public Projet updateProjet(@RequestBody Projet projet){
+        List<Projet> predecesseurs=new ArrayList<>();
+        projet.getPredecesseurs().forEach(p->
+        {
+            p.getPredecesseurs().forEach(
+                    pre->{
+                        AtomicBoolean contains= new AtomicBoolean(false);
+                        projet.getPredecesseurs().forEach(
+                                proj->{
+                                    if(proj.getCodeProjet().equals(pre.getCodeProjet()))
+                                        contains.set(true);
+                                }
+                        );
+                        if(!contains.get())
+                            predecesseurs.add(pre);
+                    }
+            );
+        });
+        projet.getPredecesseurs().addAll(predecesseurs);
+        Projet projet1=projetRepository.findById(projet.getCodeProjet()).get();
+        projet.setTaches(projet1.getTaches());
+        return projetRepository.save(projet);
+    }
 
+    @DeleteMapping("delete-risque/{id}")
+    public void deletePieceJointe(@PathVariable Long id){
+        Risque r=risqueRepository.findById(id).get();
+        risqueRepository.delete(r);
+    }
 }

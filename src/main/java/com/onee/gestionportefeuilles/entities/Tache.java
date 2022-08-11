@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
@@ -15,7 +16,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Tache {
+public class Tache implements Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     Long idTache;
@@ -43,6 +44,7 @@ public class Tache {
     @ManyToMany
     private Collection<Tache> dependances;
     @ManyToOne
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Projet projet;
     @OneToMany(mappedBy = "tache")
     private Collection<Intervention> interventions;
