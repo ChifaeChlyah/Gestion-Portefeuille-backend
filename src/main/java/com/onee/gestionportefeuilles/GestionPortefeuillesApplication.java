@@ -64,22 +64,22 @@ public class GestionPortefeuillesApplication implements CommandLineRunner {
             comptesService.saveRole(new Role(null,"Utilisateur"));
         if(comptesService.findUserByEmail("administrateur@gmail.com")==null) {
             comptesService.saveUser(new Ressource(null, null, null, null,null,
-                    "administrateur@gmail.com", "null", "123", null, null, null, null));
+                    "administrateur@gmail.com", "null", "123", null, null, null, null, null));
             comptesService.addRoleToUser("administrateur@gmail.com", "Administrateur");
         }
         if(comptesService.findUserByEmail("gestionnairePortefeuille@gmail.com")==null) {
             comptesService.saveUser(new Ressource(null, null, null, null, null,
-                    "gestionnairePortefeuille@gmail.com", "null", "123", null, null, null, null));
+                    "gestionnairePortefeuille@gmail.com", "null", "123", null, null, null, null, null));
             comptesService.addRoleToUser("gestionnairePortefeuille@gmail.com", "Gestionnaire de portefeuilles");
         }
         if(comptesService.findUserByEmail("chefProjet@gmail.com")==null) {
             comptesService.saveUser(new Ressource(null, null, null, null, null,
-                    "chefProjet@gmail.com", "null", "123", null, null, null, null));
+                    "chefProjet@gmail.com", "null", "123", null, null, null, null, null));
             comptesService.addRoleToUser("chefProjet@gmail.com", "Chef de projets");
         }
         if(comptesService.findUserByEmail("developpeur@gmail.com")==null) {
             comptesService.saveUser(new Ressource(null, null, null, null, null,
-                    "developpeur@gmail.com", "null", "123", null, null, null, null));
+                    "developpeur@gmail.com", "null", "123", null, null, null, null, null));
             comptesService.addRoleToUser("developpeur@gmail.com", "Utilisateur");
 
         }

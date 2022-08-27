@@ -35,6 +35,12 @@ public class Ressource {
     })
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Collection<Intervention> interventions;
+    @OneToMany(mappedBy = "intervenant",cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Collection<Intervention> activites;
     @OneToMany(mappedBy = "chefProjet")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Collection<Projet> projets_geres;

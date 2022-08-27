@@ -1,9 +1,9 @@
 package com.onee.gestionportefeuilles.web;
 
+import com.onee.gestionportefeuilles.dao.ActiviteRepository;
 import com.onee.gestionportefeuilles.dao.RessourceRepository;
 import com.onee.gestionportefeuilles.dao.RoleRepository;
-import com.onee.gestionportefeuilles.entities.Ressource;
-import com.onee.gestionportefeuilles.entities.Role;
+import com.onee.gestionportefeuilles.entities.*;
 import com.onee.gestionportefeuilles.service.ChangePasswordForm;
 import com.onee.gestionportefeuilles.service.ComptesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.*;
 
 @CrossOrigin("*")
 @RestController
@@ -27,12 +27,14 @@ public class RessourcesRestController {
     ComptesService comptesService;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private ActiviteRepository activiteRepository;
     @GetMapping(path="/toutesLesRessources")
     public List<Ressource> toutesLesRessources()
     {
         return ressourceRepository.findAll();
     }
-    @GetMapping(path="/toutesLesRessources/{id}")
+    @GetMapping(path="/ressource-par-code/{id}")
     public Ressource getRessource(@PathVariable("id") Long id)
     {
         return ressourceRepository.findById(id).get();
@@ -118,5 +120,36 @@ public class RessourcesRestController {
         }else{
             return false;
         }
+    }
+    @PostMapping(path = "/add-activites/{id}")
+    public void addActivites(@RequestBody Collection<Activite> activites, @PathVariable Long id
+    ) throws Exception{
+        Ressource intervenenat=ressourceRepository.findById(id).get();
+        activites.forEach(activite->
+        {
+            activite.setIntervenant(intervenenat);
+            activiteRepository.save(activite);
+        });
+    }
+    @GetMapping(path="activitesByUser/{id}")
+    public List<Activite> getActivites(@PathVariable Long id)
+    {
+       List<Activite> allActivites=activiteRepository.findAllByOrderByDateAsc();
+       List<Activite> activites=new ArrayList<>();
+       allActivites.forEach(a->{
+           if(a.getIntervenant().getCodeRessource()==id)
+               activites.add(a);
+       });
+       return activites;
+    }
+    @DeleteMapping(path="delete-activites/{id}")
+    public void deleteAllActivites(@PathVariable Long id)
+    {
+        List<Activite> activites=getActivites(id);
+        activites.forEach(
+                activite -> {
+                    activiteRepository.delete(activite);
+                }
+        );
     }
 }

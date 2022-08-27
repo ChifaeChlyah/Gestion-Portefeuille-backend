@@ -17,6 +17,7 @@ public class Intervention {
     Long idIntervention;
 //    double charge;
     double affectation;
+    double avancement;
     // relation entre les tables
     @ManyToOne
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

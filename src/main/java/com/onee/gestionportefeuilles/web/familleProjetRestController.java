@@ -4,9 +4,7 @@ import com.onee.gestionportefeuilles.dao.FamilleProjetRepository;
 import com.onee.gestionportefeuilles.entities.FamilleProjet;
 import com.onee.gestionportefeuilles.entities.Projet;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 @CrossOrigin("*")
@@ -19,4 +17,13 @@ public class familleProjetRestController {
     {
         return familleProjetRepository.findAll();
     }
+    @PostMapping(path="/add-portefeuille")
+    public boolean addPortfeuille(@RequestBody FamilleProjet portefeuille)
+    {
+        if(familleProjetRepository.findById(portefeuille.getCodeFamille()).isPresent())
+            return false;
+        familleProjetRepository.save(portefeuille);
+        return true;
+    }
+
 }

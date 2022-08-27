@@ -19,6 +19,7 @@ public class Risque {
     String severite;
     String description;
     double probabilite;
+    double severity;
     //relations entre les tables
     @ManyToOne
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
